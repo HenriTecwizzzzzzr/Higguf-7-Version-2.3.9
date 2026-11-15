@@ -4,6 +4,19 @@
 
 Building Higguf#7 From Scratch — 2B Pilot Update (Not a Finished AI Yet)
 
+## Thumbnail
+
+Use [`assets/youtube/higguf7-2b-pilot-thumbnail-background.png`](../assets/youtube/higguf7-2b-pilot-thumbnail-background.png)
+as the background. Add these text overlays in an editor rather than treating
+the generated artwork as a factual label:
+
+- `HIGGUF#7` — upper left, white, bold
+- `2B PILOT` — middle left, amber, bold
+- `NOT FULLY TRAINED` — lower left, white on a dark translucent strip
+
+The background contains no logos or text. Its SHA-256 is
+`73837E5D313CF33740E78A167F76C277DDA35348C106CB852A1DD2C884502385`.
+
 ## Description
 
 This video documents the Higguf#7 from-scratch language-model project. The
