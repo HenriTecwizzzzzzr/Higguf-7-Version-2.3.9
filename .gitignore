@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+.env.*
+!.env.example
+data/raw/
+data/processed/
+data/tokenized/
+checkpoints/
+wandb/
+outputs/
+.pytest_cache/
+.ruff_cache/
+artifacts/
+

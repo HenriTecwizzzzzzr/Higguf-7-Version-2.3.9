@@ -1,0 +1,50 @@
+# Higguf#7 training log
+
+## Seed pilot
+
+| Item | Observed result |
+| --- | --- |
+| Initialization | Random weights, seed 7; no pretrained checkpoint |
+| Model | 94,615,040 parameters |
+| Hardware | Kaggle T4 x2 |
+| Dataset | Approved WikiText pilot (`wikitext-2-raw-v1`) |
+| Tokenizer | Fresh 8,192-token BPE tokenizer |
+| Training stream | 2,714,645 tokens |
+| Latest draft checkpoint | 4,020 updates |
+| Last logged loss | 4.3785 |
+
+The initial 20-update run logged loss 9.1679 at its first update and 7.3498 at
+its final update. Later continuation batches reduced the last logged loss to
+5.9899 at 520 total updates, 5.5488 at 1,520 updates, and 4.3785 at 4,020
+updates.
+
+## Persistence
+
+The 4,020-update checkpoint has been submitted as a private Kaggle version
+commit. The notebook reruns the pilot from random initialisation while creating
+the committed output; check the Kaggle version status before treating the
+checkpoint as permanently stored.
+
+## 2B pilot
+
+| Item | Observed result |
+| --- | --- |
+| Model | 2,063,854,080 parameters |
+| Hardware | Kaggle T4 x2, FSDP full sharding with CPU offload |
+| Optimizer | Adafactor, FP16 initialization |
+| Dataset | Approved WikiText-2 stream with a fresh 32,000-token BPE tokenizer |
+| Checkpoint format | FSDP `SHARDED_STATE_DICT` (resumable) |
+| Completed updates | 6, with each later step restored from the prior checkpoint |
+| Losses | 1,572.7500 (step 1), 1,489.1250 (step 2), 1,408.5000 (step 3), 1,331.5000 (step 4), 1,258.7500 (step 5), 1,189.4375 (step 6) |
+
+The first attempt to save step 3 exhausted Kaggle's 19.5 GiB output quota.
+The obsolete, non-resumable checkpoint pair, incomplete files, and later the
+step-1, step-2, and step-3 shard pairs were removed with user approval. The
+resumable step-4, step-5, and step-6 pairs are the authoritative 2B pilot
+artifacts. Future runs must retain only the latest two checkpoint pairs.
+
+## Scope note
+
+This is an early text-only Seed pilot, not the 4B, 6B, or 10B target model. It
+must not be described as a trained 10B model or as having image/file-generation
+capabilities.

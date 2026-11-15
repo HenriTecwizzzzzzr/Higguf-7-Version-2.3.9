@@ -1,0 +1,35 @@
+# Higguf#7 1.5B target: trained entirely from random initialisation.
+# Exact parameter count with tied embeddings: 1,514,181,888.
+#
+# This is a *new* model, not an expansion of the trained 94.6M Seed weights.
+# It requires FSDP or DeepSpeed ZeRO-3 plus CPU offload across both GPUs;
+# normal DataParallel duplicates the model and will run out of memory on T4 GPUs.
+model:
+  vocab_size: 32000
+  hidden_size: 2304
+  intermediate_size: 7680
+  num_layers: 22
+  num_attention_heads: 24
+  num_key_value_heads: 4
+  max_sequence_length: 1024
+  rope_theta: 500000.0
+  rms_norm_eps: 1.0e-5
+  tie_word_embeddings: true
+
+training:
+  seed: 7
+  # T4 GPUs run this pilot in fp16. CPU offload is required for AdamW states.
+  precision: fp16
+  micro_batch_size: 1
+  gradient_accumulation_steps: 128
+  learning_rate: 3.0e-4
+  min_learning_rate: 3.0e-5
+  warmup_tokens: 500000000
+  max_tokens: 100000000000
+  weight_decay: 0.1
+  grad_clip_norm: 1.0
+  checkpoint_every_steps: 100
+  output_dir: checkpoints/higguf-7-1.5b
+
+data:
+  train_path: data/tokenized/train.bin

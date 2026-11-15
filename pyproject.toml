@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "higguf"
+version = "0.1.0"
+description = "From-scratch training code for Higguf#7"
+requires-python = ">=3.10"
+dependencies = [
+  "torch>=2.4",
+  "PyYAML>=6.0",
+  "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+data = ["tokenizers>=0.20", "datasets>=3.0"]
+distributed = ["deepspeed>=0.15"]
+dev = ["pytest>=8", "ruff>=0.7", "mypy>=1.13"]
+
+[tool.setuptools.packages.find]
+include = ["higguf*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
