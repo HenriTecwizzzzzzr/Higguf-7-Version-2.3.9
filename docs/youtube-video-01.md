@@ -62,3 +62,9 @@ log.
 4. `Six pilot updates • loss 1572.75 → 1189.44` (30–45 s)
 5. `Pilot only — not fully trained` (45–60 s)
 6. `Next: corpus, training, evaluation → 18B roadmap` (60–75 s)
+
+## Accessibility asset
+
+Upload [`assets/youtube/higguf7-2b-pilot.en.srt`](../assets/youtube/higguf7-2b-pilot.en.srt)
+with the finished video as the English subtitle track. The timing matches the
+75-second narration above.

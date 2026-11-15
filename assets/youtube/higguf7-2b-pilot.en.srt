@@ -1,0 +1,35 @@
+1
+00:00:00,000 --> 00:00:05,000
+Higguf#7 — built from random initialization.
+
+2
+00:00:05,000 --> 00:00:12,000
+The current milestone is an exact 2.064-billion-parameter decoder-only text model.
+
+3
+00:00:12,000 --> 00:00:21,000
+It is not based on a pretrained model or an API.
+
+4
+00:00:21,000 --> 00:00:30,000
+Two free NVIDIA T4 GPUs on Kaggle ran fully sharded training with CPU offload.
+
+5
+00:00:30,000 --> 00:00:39,000
+That completed six small pilot updates on an approved WikiText-2 stream.
+
+6
+00:00:39,000 --> 00:00:47,000
+The logged loss moved from 1572.75 on update one to 1189.44 on update six.
+
+7
+00:00:47,000 --> 00:00:57,000
+This proves the distributed training path works. It does not mean the model is fully trained.
+
+8
+00:00:57,000 --> 00:01:06,000
+There is no public checkpoint in this release, and image and file generation are future work.
+
+9
+00:01:06,000 --> 00:01:15,000
+Next: lawful corpus preparation, much more training, evaluation, and an 18B architecture roadmap.
