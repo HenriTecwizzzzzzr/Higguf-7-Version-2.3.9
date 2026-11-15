@@ -102,6 +102,9 @@ what can truthfully be released now (source, configurations, and pilot logs)
 and what must not be claimed (a complete 2B checkpoint, useful image generation,
 or a trained 18B model).
 
+The accompanying [2B pilot model card](docs/model-card-2b-pilot.md) describes
+the architecture, verified run conditions, data provenance, and limitations.
+
 ## Prepare a corpus
 
 Place UTF-8 `.txt` files that you have the right to use beneath `data/raw/`,
