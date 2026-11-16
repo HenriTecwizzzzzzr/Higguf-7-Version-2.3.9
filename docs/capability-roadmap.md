@@ -39,3 +39,17 @@ free T4 x2 Seed run provides.
    training it.
 
 No pretrained model or inference API is substituted for these stages.
+
+## Future mixture-of-experts research
+
+Five unrelated 4B models cannot simply be joined together to create a trained
+20B model. Their parameters, tokenizers, representations, and learned skills
+will generally be incompatible. Higguf#7 instead has an experimental
+from-scratch mixture-of-experts component in `higguf/moe.py`. It provides a
+learned top-k router and compatible SwiGLU experts for future experiments.
+
+This is not part of the released 2B dense pilot, is not trained, and does not
+make image, file, or video generation appear automatically. A practical MoE
+run would require a shared tokenizer and architecture, router training,
+distributed expert placement, evaluation of routing quality, and separate
+safety work for every additional modality.
