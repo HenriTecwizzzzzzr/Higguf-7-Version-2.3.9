@@ -21,6 +21,7 @@ class TopKRouter(nn.Module):
             raise ValueError("num_experts must be at least 1")
         if not 1 <= experts_per_token <= num_experts:
             raise ValueError("experts_per_token must be between 1 and num_experts")
+        self.num_experts = num_experts
         self.experts_per_token = experts_per_token
         self.gate = nn.Linear(hidden_size, num_experts, bias=False)
 
@@ -28,6 +29,14 @@ class TopKRouter(nn.Module):
         probabilities = torch.softmax(self.gate(tokens), dim=-1)
         weights, indices = torch.topk(probabilities, self.experts_per_token, dim=-1)
         return weights / weights.sum(dim=-1, keepdim=True), indices
+
+    def load_balance_loss(self, tokens: Tensor) -> Tensor:
+        """Auxiliary Switch-style loss that discourages router collapse."""
+        probabilities = torch.softmax(self.gate(tokens), dim=-1)
+        assignments = functional.one_hot(probabilities.argmax(dim=-1), self.num_experts).to(probabilities.dtype)
+        mean_probability = probabilities.mean(dim=0)
+        mean_assignment = assignments.mean(dim=0)
+        return self.num_experts * torch.sum(mean_probability * mean_assignment)
 
 
 class ExpertMLP(nn.Module):

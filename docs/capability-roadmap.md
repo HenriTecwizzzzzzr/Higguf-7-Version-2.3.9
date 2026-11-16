@@ -46,7 +46,8 @@ Five unrelated 4B models cannot simply be joined together to create a trained
 20B model. Their parameters, tokenizers, representations, and learned skills
 will generally be incompatible. Higguf#7 instead has an experimental
 from-scratch mixture-of-experts component in `higguf/moe.py`. It provides a
-learned top-k router and compatible SwiGLU experts for future experiments.
+learned top-k router, a load-balancing training loss, and compatible SwiGLU
+experts for future experiments.
 
 This is not part of the released 2B dense pilot, is not trained, and does not
 make image, file, or video generation appear automatically. A practical MoE

@@ -18,3 +18,12 @@ def test_moe_runs_forward_and_backward() -> None:
     assert result.shape == tokens.shape
     result.square().mean().backward()
     assert tokens.grad is not None
+
+
+def test_router_load_balance_loss_is_differentiable() -> None:
+    router = TopKRouter(hidden_size=8, num_experts=4, experts_per_token=2)
+    tokens = torch.randn(6, 8, requires_grad=True)
+    loss = router.load_balance_loss(tokens)
+    assert loss.ndim == 0
+    loss.backward()
+    assert router.gate.weight.grad is not None
