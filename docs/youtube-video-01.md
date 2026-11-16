@@ -61,7 +61,13 @@ log.
 3. `Kaggle T4 × 2 • FSDP + CPU offload` (15–30 s)
 4. `Six pilot updates • loss 1572.75 → 1189.44` (30–45 s)
 5. `Pilot only — not fully trained` (45–60 s)
-6. `Next: corpus, training, evaluation → 18B roadmap` (60–75 s)
+6. `End plan: public 18B text AI + separate image, file & video tools` (60–75 s)
+
+Use this final narration sentence:
+
+> The end plan is a public 18B Higguf#7 text model and separate image, file,
+> and video-generation tools—but only after each has been trained, evaluated,
+> and is ready for a responsible public release.
 
 ## Accessibility asset
 

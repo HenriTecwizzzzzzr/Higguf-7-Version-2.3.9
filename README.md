@@ -92,6 +92,13 @@ generation needs a separate lawfully sourced image-and-caption dataset and a
 separate multimodal architecture. See
 [the capability roadmap](docs/capability-roadmap.md) for the exact plan.
 
+## Public end plan
+
+The intended public end plan is an 18B Higguf#7 text model, plus separately
+trained image, file, and video-generation tools. None of those future tools is
+available publicly yet. Each must first have lawful data, reproducible training,
+evaluation, safety testing, and a release review.
+
 The observed Seed-pilot results are tracked in
 [the training log](docs/training-log.md).
 
