@@ -43,6 +43,23 @@ step-1, step-2, and step-3 shard pairs were removed with user approval. The
 resumable step-4, step-5, and step-6 pairs are the authoritative 2B pilot
 artifacts. Future runs must retain only the latest two checkpoint pairs.
 
+## Local real-data Seed verification
+
+| Item | Observed result |
+| --- | --- |
+| Model | 106,980,096-parameter Seed architecture |
+| Hardware | Local CPU only |
+| Dataset | WikiText-103 raw training split, CC BY-SA 3.0; provenance manifest recorded |
+| Tokenizer | Fresh 8,192-token tokenizer trained from the approved local corpus |
+| Training stream | 136,340,605 tokens |
+| Completed updates | 1 |
+| Loss | 9.2922 |
+
+This one-step run verified the real local data, tokenizer, token stream,
+forward pass, backward pass, optimizer, and checkpoint path together. Its
+checkpoint is a 1.28 GB local artifact and is not a useful released model.
+It must not be described as a trained 2B checkpoint or a chat-ready AI.
+
 ## Scope note
 
 This is an early text-only Seed pilot, not the 4B, 6B, or 10B target model. It
