@@ -73,6 +73,16 @@ Check a configuration without allocating its weights:
 python scripts/estimate_resources.py --config configs/higguf-18b.yaml
 ```
 
+Before starting a training job, run the setup-only preflight. It checks that
+the configuration is coherent and that the token file exists and is large
+enough. `--require-cuda` also checks the requested number of GPUs without
+allocating model weights:
+
+```powershell
+python scripts/preflight_training.py --config configs/smoke-test.yaml
+python scripts/preflight_training.py --config configs/higguf-2b.yaml --require-cuda --minimum-gpus 2
+```
+
 ## First training milestone: Higguf#7 Seed
 
 `configs/higguf-seed-107m.yaml` is a roughly 107M-parameter model initialized
