@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import itertools
 import math
 import random
 from collections.abc import Iterator
@@ -36,6 +35,12 @@ class TokenDataset(Dataset[torch.Tensor]):
 def load_config(path: str) -> dict:
     with open(path, encoding="utf-8") as file:
         return yaml.safe_load(file)
+
+
+def infinite_batches(batches: DataLoader[torch.Tensor]) -> Iterator[torch.Tensor]:
+    """Repeat a DataLoader without caching every yielded batch in memory."""
+    while True:
+        yield from batches
 
 
 def learning_rate(step: int, total_steps: int, warmup_steps: int, maximum: float, minimum: float) -> float:
@@ -116,7 +121,7 @@ def main() -> None:
     checkpoint_dir = Path(training["output_dir"])
     model.train()
     optimizer.zero_grad(set_to_none=True)
-    batch_iterator: Iterator[torch.Tensor] = itertools.cycle(batches)
+    batch_iterator = infinite_batches(batches)
     for step in range(start_step, start_step + arguments.steps):
         lr = learning_rate(step, max_steps, warmup_steps, training["learning_rate"], training["min_learning_rate"])
         for group in optimizer.param_groups:
