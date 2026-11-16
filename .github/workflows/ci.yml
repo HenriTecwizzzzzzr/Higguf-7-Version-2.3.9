@@ -19,6 +19,10 @@ jobs:
           python -m pip install --editable .
       - name: Run unit tests
         run: python -m pytest -q
+      - name: Run smoke-test training preflight
+        run: |
+          python scripts/create_synthetic_smoke_data.py
+          python scripts/preflight_training.py --config configs/smoke-test.yaml
       - name: Verify published resource configurations
         run: |
           python scripts/estimate_resources.py --config configs/higguf-2b.yaml
