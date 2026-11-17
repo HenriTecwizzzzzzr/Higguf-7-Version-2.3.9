@@ -10,19 +10,20 @@
 | Dataset | Approved WikiText pilot (`wikitext-2-raw-v1`) |
 | Tokenizer | Fresh 8,192-token BPE tokenizer |
 | Training stream | 2,714,645 tokens |
-| Latest saved Kaggle checkpoint | 5,020 updates (Kaggle Version #6) |
-| Last logged loss | 4.4879 |
+| Latest saved Kaggle checkpoint | 6,020 updates (Kaggle Version #7) |
+| Last logged loss | 3.9689 |
 
 The initial 20-update run logged loss 9.1679 at its first update and 7.3498 at
 its final update. Later continuation batches reduced the last logged loss to
 5.9899 at 520 total updates, 5.5488 at 1,520 updates, and 4.3785 at 4,020
 updates. A further 1,000-update continuation restored the 4,020-update
-checkpoint and ended at loss 4.4879 at 5,020 updates. Kaggle Version #6 saved
-that continuation successfully.
+checkpoint and ended at loss 4.4879 at 5,020 updates. A second 1,000-update
+continuation restored that 5,020-step checkpoint and ended at loss 3.9689 at
+6,020 updates. Kaggle Version #7 saved the latest continuation successfully.
 
 ## Persistence
 
-Kaggle Version #6 was saved successfully with the 5,020-update Seed output.
+Kaggle Version #7 was saved successfully with the 6,020-update Seed output.
 It is a reproducible research checkpoint, not a general-purpose chatbot or a
 2B model.
 
