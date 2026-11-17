@@ -25,11 +25,35 @@ updates on WikiText-2, and the 18B configuration has not been launched.
 
 ```powershell
 py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -e ".[dev]"
+py -m pip install -e ".[dev]"
 python scripts/create_synthetic_smoke_data.py
-python -m higguf.train --config configs/smoke-test.yaml
+py -m higguf.train --config configs/smoke-test.yaml
 ```
+
+If PowerShell blocks virtual-environment activation, you do not need to change
+Windows security settings: use `py -m pip` and `py -m ...` as above. To use the
+project virtual environment specifically, replace `py` with
+`.\.venv\Scripts\python.exe`.
+
+## Terminal research interface
+
+The repository includes a terminal sampler for **compatible checkpoints created
+by this project's trainer**. It deliberately requires an acknowledgement flag,
+because an interface does not turn an early checkpoint into a trained chatbot.
+The local one-update Seed checkpoint can be inspected with:
+
+```powershell
+py -m pip install -e ".[data]"
+py -m higguf.chat --allow-untrained `
+  --checkpoint checkpoints/higguf-7-seed-107m-cpu-pilot/latest.pt `
+  --config configs/higguf-seed-107m-cpu-pilot.yaml `
+  --tokenizer artifacts/tokenizer-seed-8192/tokenizer.json
+```
+
+This command may be slow on CPU and its output is not expected to be useful:
+the supplied local checkpoint has only one real training update. The separately
+saved Kaggle Seed checkpoint uses a different pilot architecture, so it cannot
+be loaded by this command without a dedicated compatible loader.
 
 ## Next scale target: 1.5B
 
