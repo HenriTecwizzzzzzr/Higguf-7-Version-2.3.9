@@ -27,6 +27,23 @@ Kaggle Version #7 was saved successfully with the 6,020-update Seed output.
 It is a reproducible research checkpoint, not a general-purpose chatbot or a
 2B model.
 
+## Seed recovery branch
+
+| Item | Observed result |
+| --- | --- |
+| Initialization | Random weights, seed 7; restarted independently after the prior checkpoint was unavailable as an input |
+| Model | 94,615,040 parameters |
+| Hardware | Kaggle T4 x2 |
+| Dataset | Approved WikiText pilot (`wikitext-2-raw-v1`) |
+| Completed updates | 1,020 (20 setup updates plus 1,000 recovery updates) |
+| Last logged loss | 5.9082 |
+| Persistence | Kaggle Version #8, successfully Quick Saved |
+
+This is a separate recovery branch, **not** a continuation of the 6,020-update
+checkpoint. It was created after the older checkpoint could not be located in
+the fresh Kaggle session's Inputs. It remains an early research checkpoint, not
+a chatbot, 2B model, or 4B model.
+
 ## 2B pilot
 
 | Item | Observed result |
