@@ -139,9 +139,10 @@ def main() -> None:
         if keep_last < 1:
             raise SystemExit("checkpoint_keep_last must be at least one.")
         dtype = torch.float16 if precision == "fp16" else torch.bfloat16
-        random.seed(training["seed"] + rank)
-        np.random.seed(training["seed"] + rank)
-        torch.manual_seed(training["seed"] + rank)
+        # Every rank must initialise identical random weights when avoiding the
+        # expensive full-model ``sync_module_states`` broadcast. FSDP shards
+        # these matching weights immediately after materialisation.
+        torch.manual_seed(training["seed"])
 
         # Meta construction avoids allocating the entire target on every rank.
         with torch.device("meta"):
@@ -154,9 +155,13 @@ def main() -> None:
             cpu_offload=CPUOffload(offload_params=arguments.cpu_offload),
             device_id=device,
             param_init_fn=lambda module: initialise_meta_module(module, device),
-            sync_module_states=True,
+            sync_module_states=bool(training.get("sync_module_states", False)),
             use_orig_params=True,
         )
+        # Training data and any later random operations remain rank-specific.
+        random.seed(training["seed"] + rank)
+        np.random.seed(training["seed"] + rank)
+        torch.manual_seed(training["seed"] + rank)
         optimizer = build_optimizer(model, training)
         scaler = torch.amp.GradScaler("cuda", enabled=precision == "fp16")
         start_step = 0

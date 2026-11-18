@@ -15,3 +15,4 @@ def test_4b_pilot_has_the_exact_4b_parameter_count() -> None:
     assert estimate_resources(HiggufConfig(**pilot["model"])).parameters == estimate_resources(HiggufConfig(**full["model"])).parameters
     assert pilot["model"]["max_sequence_length"] == 8
     assert pilot["training"]["checkpoint_every_steps"] == 1
+    assert pilot["training"]["sync_module_states"] is False

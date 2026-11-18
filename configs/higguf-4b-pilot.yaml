@@ -27,6 +27,9 @@ training:
   grad_clip_norm: 1.0
   checkpoint_every_steps: 1
   checkpoint_keep_last: 2
+  # Identical seed on every rank allows FSDP to shard directly without a
+  # full-model initialisation broadcast, reducing peak memory for this probe.
+  sync_module_states: false
   output_dir: checkpoints/higguf-7-4b-pilot
 
 data:
