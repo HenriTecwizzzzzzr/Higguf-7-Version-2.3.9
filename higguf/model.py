@@ -39,6 +39,10 @@ class RMSNorm(nn.Module):
         variance = x.float().pow(2).mean(dim=-1, keepdim=True)
         return (x * torch.rsqrt(variance + self.eps)).to(x.dtype) * self.weight
 
+    def reset_parameters(self) -> None:
+        """Initialise explicitly so FSDP meta-device materialisation is safe."""
+        nn.init.ones_(self.weight)
+
 
 class RotaryEmbedding(nn.Module):
     def __init__(self, head_dim: int, theta: float) -> None:

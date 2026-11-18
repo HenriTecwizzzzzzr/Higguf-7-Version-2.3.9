@@ -78,9 +78,15 @@ is about 59.02 GiB before activations. It is therefore not trainable by the
 single-process trainer or this PC, and it is not correct to call it a trained
 4B model. A future 4B run needs FSDP/ZeRO-3 sharding, CPU/NVMe offload,
 activation checkpointing, a lawful tokenized corpus, and checkpoint recovery.
+The repository now includes an FSDP research launcher for this class of run;
+it materialises target weights per shard and writes per-rank sharded recovery
+files. It has not been used to claim a completed 4B run.
 
 ```powershell
 python scripts/estimate_resources.py --config configs/higguf-4b.yaml
+# On a compatible multi-GPU CUDA host only:
+torchrun --standalone --nproc_per_node=2 -m higguf.train_fsdp `
+  --config configs/higguf-4b.yaml --steps 1 --cpu-offload
 ```
 
 ## Long-term 18B architecture
