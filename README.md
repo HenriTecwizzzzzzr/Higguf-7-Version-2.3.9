@@ -87,6 +87,10 @@ python scripts/estimate_resources.py --config configs/higguf-4b.yaml
 # On a compatible multi-GPU CUDA host only:
 torchrun --standalone --nproc_per_node=2 -m higguf.train_fsdp `
   --config configs/higguf-4b.yaml --steps 1 --cpu-offload
+# Resume only from matching shards produced by that launcher:
+torchrun --standalone --nproc_per_node=2 -m higguf.train_fsdp `
+  --config configs/higguf-4b.yaml --steps 1 --cpu-offload `
+  --resume-dir checkpoints/higguf-7-4b --resume-step 1
 ```
 
 ## Long-term 18B architecture

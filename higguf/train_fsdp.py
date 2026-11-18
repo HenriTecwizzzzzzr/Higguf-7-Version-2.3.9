@@ -74,14 +74,40 @@ def save_sharded_checkpoint(model: FSDP, optimizer: torch.optim.Optimizer, direc
     torch.save(state, directory / f"step-{step:08d}-rank-{rank}.pt")
 
 
+def load_sharded_checkpoint(
+    model: FSDP, optimizer: torch.optim.Optimizer, directory: Path, step: int, rank: int
+) -> int:
+    """Restore one rank's matching FSDP shard and return its completed step."""
+    checkpoint = directory / f"step-{step:08d}-rank-{rank}.pt"
+    if not checkpoint.is_file():
+        raise FileNotFoundError(f"Missing rank-local FSDP checkpoint: {checkpoint}")
+    state = torch.load(checkpoint, map_location="cpu", weights_only=False)
+    if state.get("format") != "fsdp-sharded-v1":
+        raise ValueError("Checkpoint is not a Higguf FSDP sharded checkpoint.")
+    if int(state.get("step", -1)) != step:
+        raise ValueError(f"Checkpoint step mismatch in {checkpoint}")
+    config = ShardedStateDictConfig(offload_to_cpu=True)
+    with FSDP.state_dict_type(model, StateDictType.SHARDED_STATE_DICT, config):
+        model.load_state_dict(state["model"])
+        optimizer_state = FSDP.optim_state_dict_to_load(model, optimizer, state["optimizer"])
+    optimizer.load_state_dict(optimizer_state)
+    return step
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run a Higguf#7 FSDP research pilot with torchrun.")
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--steps", type=int, default=1)
     parser.add_argument("--cpu-offload", action="store_true", help="Offload FSDP parameters between GPU operations.")
+    parser.add_argument("--resume-dir", type=Path, help="Directory containing rank-local FSDP checkpoint shards.")
+    parser.add_argument("--resume-step", type=int, help="Completed step number to restore from --resume-dir.")
     arguments = parser.parse_args()
     if arguments.steps < 1:
         raise SystemExit("--steps must be at least one")
+    if (arguments.resume_dir is None) != (arguments.resume_step is None):
+        raise SystemExit("--resume-dir and --resume-step must be provided together.")
+    if arguments.resume_step is not None and arguments.resume_step < 1:
+        raise SystemExit("--resume-step must be positive.")
     if not torch.cuda.is_available():
         raise SystemExit("FSDP training requires CUDA; no CUDA GPU is available.")
     if "RANK" not in os.environ or "WORLD_SIZE" not in os.environ or "LOCAL_RANK" not in os.environ:
@@ -120,6 +146,11 @@ def main() -> None:
         )
         optimizer = build_optimizer(model, training)
         scaler = torch.amp.GradScaler("cuda", enabled=precision == "fp16")
+        start_step = 0
+        if arguments.resume_dir is not None and arguments.resume_step is not None:
+            start_step = load_sharded_checkpoint(model, optimizer, arguments.resume_dir, arguments.resume_step, rank)
+            if rank == 0:
+                print(f"Restored sharded checkpoint at step {start_step}.", flush=True)
         dataset = TokenDataset(settings["data"]["train_path"], model_settings["max_sequence_length"])
         sampler = DistributedSampler(dataset, num_replicas=world_size, rank=rank, shuffle=True, drop_last=True)
         batches = DataLoader(dataset, batch_size=training["micro_batch_size"], sampler=sampler, drop_last=True)
@@ -130,7 +161,7 @@ def main() -> None:
         max_steps = max(1, training["max_tokens"] // tokens_per_step)
         warmup_steps = training["warmup_tokens"] // tokens_per_step
         model.train()
-        for step in range(arguments.steps):
+        for step in range(start_step, start_step + arguments.steps):
             lr = learning_rate(step, max_steps, warmup_steps, training["learning_rate"], training["min_learning_rate"])
             for group in optimizer.param_groups:
                 group["lr"] = lr
