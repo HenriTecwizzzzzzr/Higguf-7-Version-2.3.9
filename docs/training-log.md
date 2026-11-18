@@ -85,6 +85,24 @@ broadcast and used the minimum eight-token micro-batch; it also restarted
 before one update. Thus none of the observed exact-4B paths can run on the
 available free two-T4 session.
 
+## 1B-class resumable feasibility pilot
+
+| Item | Observed result |
+| --- | --- |
+| Model | 1,057,581,056-parameter Higguf#7 architecture |
+| Hardware | Kaggle T4 x2, FSDP with FP16, CPU parameter offload, and Adafactor |
+| Intended work | One 8-token update and a sharded checkpoint |
+| Local validation | Configuration resource estimate, data preflight, and 15 automated repository tests passed |
+| Remote result | The bounded Kaggle pilot remained in distributed setup/execution for more than 15 minutes without output, a saved checkpoint, or a completed update |
+| Completed updates | 0 confirmed |
+
+The configuration is designed to save after every update and to resume from
+rank-local sharded checkpoints. However, this run did not produce such a
+checkpoint, so it is not evidence of successful 1B training or chat ability.
+It is an inconclusive speed/feasibility result. A proper chatbot still requires
+substantial lawful pretraining, instruction tuning, evaluation, and conversion
+of final distributed shards to an inference checkpoint.
+
 ## Local real-data Seed verification
 
 | Item | Observed result |
