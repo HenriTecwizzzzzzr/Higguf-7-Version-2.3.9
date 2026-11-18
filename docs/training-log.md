@@ -70,7 +70,7 @@ artifacts. Future runs must retain only the latest two checkpoint pairs.
 | Hardware | Kaggle T4 x2 |
 | Method | FSDP, FP16, CPU parameter offload, Adafactor |
 | Intended work | One 8-token update using a short approved WikiText-2 sample |
-| Result | Kaggle reported: “Your notebook tried to allocate more memory than is available. It has restarted.” |
+| Result | Kaggle reported an out-of-memory restart; rank 0 exited with `SIGKILL` (`-9`) after 77.5 seconds and rank 1 was terminated |
 | Completed updates | 0 |
 
 This was an exact-architecture feasibility probe, not a reduced model and not
