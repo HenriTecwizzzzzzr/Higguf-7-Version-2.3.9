@@ -75,10 +75,12 @@ artifacts. Future runs must retain only the latest two checkpoint pairs.
 
 This was an exact-architecture feasibility probe, not a reduced model and not
 full pretraining. The kernel restarted before it could complete the one update;
-there is no 4B checkpoint or trained 4B model. The notebook implementation
-materialised the full model before FSDP sharding, so this failure does not prove
-that the repository's meta-device FSDP launcher cannot run on the same hardware.
-That alternate launcher has not yet been observed completing a 4B update.
+there is no 4B checkpoint or trained 4B model. The direct notebook
+implementation materialised the full model before FSDP sharding. A separate
+run of commit `7e552de` then used the repository's corrected non-recursive
+meta-device initializer with the same two T4 GPUs; Kaggle again reported an
+out-of-memory restart before it could report a completed update. Thus neither
+observed exact-4B path can run on the available free two-T4 session.
 
 ## Local real-data Seed verification
 

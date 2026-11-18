@@ -82,10 +82,10 @@ The repository now includes an FSDP research launcher for this class of run;
 it materialises target weights per shard and writes per-rank sharded recovery
 files. A November 2026 exact-architecture, one-update FSDP probe on Kaggle T4
 x2 exhausted the notebook memory and restarted the kernel while directly
-materialising the full model before sharding. This is a failed implementation
-probe, not a completed 4B run. It does not prove that the repository's
-meta-device FSDP launcher will succeed on that hardware; that launcher still
-requires a separately observed run.
+materialising the full model before sharding. A second run with the
+repository's corrected non-recursive meta-device FSDP launcher also restarted
+from memory pressure before completing its single update. These are failed
+implementation probes, not completed 4B runs; there is no 4B checkpoint.
 
 ```powershell
 python scripts/estimate_resources.py --config configs/higguf-4b.yaml
