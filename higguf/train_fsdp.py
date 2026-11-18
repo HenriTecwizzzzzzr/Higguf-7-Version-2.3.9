@@ -35,16 +35,17 @@ from .train import TokenDataset, infinite_batches, learning_rate, load_config
 
 
 def initialise_meta_module(module: torch.nn.Module, device: torch.device) -> None:
-    """Materialise a meta-device leaf module on this rank with Higguf init."""
-    module.to_empty(device=device)
+    """Materialise *only* this meta module's direct tensors with Higguf init.
 
-    def initialise(child: torch.nn.Module) -> None:
-        if isinstance(child, (torch.nn.Linear, torch.nn.Embedding)):
-            torch.nn.init.normal_(child.weight, mean=0.0, std=0.02)
-        elif isinstance(child, RMSNorm):
-            child.reset_parameters()
-
-    module.apply(initialise)
+    FSDP invokes ``param_init_fn`` for every meta-device module. Recursing here
+    would repeatedly allocate and initialise children and can momentarily build
+    the entire target model on every rank before sharding it.
+    """
+    module.to_empty(device=device, recurse=False)
+    if isinstance(module, (torch.nn.Linear, torch.nn.Embedding)):
+        torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
+    elif isinstance(module, RMSNorm):
+        module.reset_parameters()
 
 
 def build_optimizer(model: FSDP, training: dict) -> torch.optim.Optimizer:
