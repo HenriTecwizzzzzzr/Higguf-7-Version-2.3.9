@@ -69,6 +69,20 @@ This will run only after you supply tokenized data. The smoke-test config is
 intentionally small; it is a code-path validation, not a reduced-quality
 version of the model.
 
+## 4B target feasibility
+
+`configs/higguf-4b.yaml` defines a fresh **3,960,655,872-parameter** target.
+The configuration is valid and has been checked without allocating its weights.
+Its BF16 weights alone are about 7.38 GiB; a conventional AdamW training state
+is about 59.02 GiB before activations. It is therefore not trainable by the
+single-process trainer or this PC, and it is not correct to call it a trained
+4B model. A future 4B run needs FSDP/ZeRO-3 sharding, CPU/NVMe offload,
+activation checkpointing, a lawful tokenized corpus, and checkpoint recovery.
+
+```powershell
+python scripts/estimate_resources.py --config configs/higguf-4b.yaml
+```
+
 ## Long-term 18B architecture
 
 | Component | Value |
@@ -85,6 +99,10 @@ version of the model.
 The target needs an initial training pilot on a distributed CUDA environment.
 It will not fit or train on this PC's integrated GPU. Its 32 GB of system RAM
 is still enough for local data preparation and tiny-model validation.
+
+The exact configuration contains 17,937,537,024 parameters: BF16 weights need
+about 33.41 GiB and a conventional AdamW state needs about 267.29 GiB before
+activations. These are planning estimates, not evidence of an 18B run.
 
 The free Kaggle T4 x2 session can perform tiny FSDP pilot updates for the 2B
 configuration, but it cannot fully pretrain either the 2B model or the 18B
