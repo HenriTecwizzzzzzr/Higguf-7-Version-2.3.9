@@ -10,6 +10,13 @@ pilot. The long-term architecture target is 18B parameters. Neither is a
 finished general-purpose model yet: the 2B run has completed only six pilot
 updates on WikiText-2, and the 18B configuration has not been launched.
 
+## Community help and future contributor beta
+
+We welcome reproducible training ideas, useful software or code, experiments,
+compute guidance, and testing help for Higguf#7. People who make a useful
+contribution can be considered for a future beta when there is a genuinely
+usable release. See [the community request issue](https://github.com/HenriTecwizzzzzzr/Higguf-7-Version-2.3.9/issues/1) to contribute or register interest. There is no public beta or trained 4B checkpoint yet, and beta access is not guaranteed.
+
 ## Project stages
 
 1. Build a lawful, documented training corpus.
