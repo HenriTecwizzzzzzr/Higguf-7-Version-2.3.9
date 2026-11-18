@@ -80,7 +80,12 @@ single-process trainer or this PC, and it is not correct to call it a trained
 activation checkpointing, a lawful tokenized corpus, and checkpoint recovery.
 The repository now includes an FSDP research launcher for this class of run;
 it materialises target weights per shard and writes per-rank sharded recovery
-files. It has not been used to claim a completed 4B run.
+files. A November 2026 exact-architecture, one-update FSDP probe on Kaggle T4
+x2 exhausted the notebook memory and restarted the kernel while directly
+materialising the full model before sharding. This is a failed implementation
+probe, not a completed 4B run. It does not prove that the repository's
+meta-device FSDP launcher will succeed on that hardware; that launcher still
+requires a separately observed run.
 
 ```powershell
 python scripts/estimate_resources.py --config configs/higguf-4b.yaml

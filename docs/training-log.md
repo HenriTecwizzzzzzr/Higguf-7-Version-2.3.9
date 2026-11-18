@@ -62,6 +62,24 @@ step-1, step-2, and step-3 shard pairs were removed with user approval. The
 resumable step-4, step-5, and step-6 pairs are the authoritative 2B pilot
 artifacts. Future runs must retain only the latest two checkpoint pairs.
 
+## 4B exact-architecture feasibility probe
+
+| Item | Observed result |
+| --- | --- |
+| Model | 3,960,655,872-parameter Higguf#7 4B architecture |
+| Hardware | Kaggle T4 x2 |
+| Method | FSDP, FP16, CPU parameter offload, Adafactor |
+| Intended work | One 8-token update using a short approved WikiText-2 sample |
+| Result | Kaggle reported: “Your notebook tried to allocate more memory than is available. It has restarted.” |
+| Completed updates | 0 |
+
+This was an exact-architecture feasibility probe, not a reduced model and not
+full pretraining. The kernel restarted before it could complete the one update;
+there is no 4B checkpoint or trained 4B model. The notebook implementation
+materialised the full model before FSDP sharding, so this failure does not prove
+that the repository's meta-device FSDP launcher cannot run on the same hardware.
+That alternate launcher has not yet been observed completing a 4B update.
+
 ## Local real-data Seed verification
 
 | Item | Observed result |
