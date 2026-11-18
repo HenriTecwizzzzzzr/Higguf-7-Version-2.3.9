@@ -84,7 +84,9 @@ files. A November 2026 exact-architecture, one-update FSDP probe on Kaggle T4
 x2 exhausted the notebook memory and restarted the kernel while directly
 materialising the full model before sharding. A second run with the
 repository's corrected non-recursive meta-device FSDP launcher also restarted
-from memory pressure before completing its single update. These are failed
+from memory pressure before completing its single update. A third run removed
+the full-model initialisation broadcast and used the smallest configured
+eight-token micro-batch; it also restarted before one update. These are failed
 implementation probes, not completed 4B runs; there is no 4B checkpoint.
 
 ```powershell

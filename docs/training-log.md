@@ -79,8 +79,11 @@ there is no 4B checkpoint or trained 4B model. The direct notebook
 implementation materialised the full model before FSDP sharding. A separate
 run of commit `7e552de` then used the repository's corrected non-recursive
 meta-device initializer with the same two T4 GPUs; Kaggle again reported an
-out-of-memory restart before it could report a completed update. Thus neither
-observed exact-4B path can run on the available free two-T4 session.
+out-of-memory restart before it could report a completed update. A third run
+of commit `d33e329` additionally removed the full-model initialization
+broadcast and used the minimum eight-token micro-batch; it also restarted
+before one update. Thus none of the observed exact-4B paths can run on the
+available free two-T4 session.
 
 ## Local real-data Seed verification
 
