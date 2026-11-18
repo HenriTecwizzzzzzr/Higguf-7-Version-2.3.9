@@ -16,3 +16,15 @@ def test_4b_pilot_has_the_exact_4b_parameter_count() -> None:
     assert pilot["model"]["max_sequence_length"] == 8
     assert pilot["training"]["checkpoint_every_steps"] == 1
     assert pilot["training"]["sync_module_states"] is False
+
+
+def test_1b_pilot_keeps_the_1b_architecture_and_uses_tiny_resumable_chunks() -> None:
+    root = Path(__file__).parents[1]
+    full = yaml.safe_load((root / "configs" / "higguf-1b.yaml").read_text(encoding="utf-8"))
+    pilot = yaml.safe_load((root / "configs" / "higguf-1b-pilot.yaml").read_text(encoding="utf-8"))
+
+    assert estimate_resources(HiggufConfig(**full["model"])).parameters == 1_057_581_056
+    assert estimate_resources(HiggufConfig(**pilot["model"])).parameters == 1_057_581_056
+    assert pilot["model"]["max_sequence_length"] == 8
+    assert pilot["training"]["checkpoint_every_steps"] == 1
+    assert pilot["training"]["checkpoint_keep_last"] >= 1

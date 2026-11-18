@@ -200,7 +200,10 @@ def main() -> None:
             finished = step + 1
             if rank == 0:
                 print(f"step={finished} mean_loss={total_loss / training['gradient_accumulation_steps']:.4f} lr={lr:.2e}", flush=True)
-            if finished % training["checkpoint_every_steps"] == 0 or finished == arguments.steps:
+            # ``arguments.steps`` is the number of *new* steps in this invocation;
+            # after a resume, ``finished`` is an absolute step number.  Always save
+            # the final new step so short, interruptible chunks are recoverable.
+            if finished % training["checkpoint_every_steps"] == 0 or step == start_step + arguments.steps - 1:
                 output_dir = Path(training["output_dir"])
                 save_sharded_checkpoint(model, optimizer, output_dir, finished, rank)
                 dist.barrier()

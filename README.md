@@ -76,6 +76,29 @@ This will run only after you supply tokenized data. The smoke-test config is
 intentionally small; it is a code-path validation, not a reduced-quality
 version of the model.
 
+## 1B-class resumable pilot
+
+`configs/higguf-1b.yaml` defines a fresh 1,057,581,056-parameter model. The
+matching `higguf-1b-pilot.yaml` preserves the exact architecture while using an
+8-token, one-update FSDP feasibility chunk and saves a sharded checkpoint after
+every update. Continue a successful run one tiny chunk at a time with:
+
+```powershell
+torchrun --standalone --nproc_per_node=2 -m higguf.train_fsdp `
+  --config configs/higguf-1b-pilot.yaml --steps 1 --cpu-offload
+
+# After a successful first chunk, resume the saved rank-local shards:
+torchrun --standalone --nproc_per_node=2 -m higguf.train_fsdp `
+  --config configs/higguf-1b-pilot.yaml --steps 1 --cpu-offload `
+  --resume-dir checkpoints/higguf-7-1b-pilot --resume-step 1
+```
+
+A successful tiny chunk validates only the distributed training and recovery
+path. It cannot make the model a proper chatbot. A chat-ready result requires a
+large lawful pretraining corpus, many validated training updates, a separate
+instruction-tuning dataset, held-out evaluation, safety testing, and conversion
+of the final FSDP shards into an inference checkpoint.
+
 ## 4B target feasibility
 
 `configs/higguf-4b.yaml` defines a fresh **3,960,655,872-parameter** target.
