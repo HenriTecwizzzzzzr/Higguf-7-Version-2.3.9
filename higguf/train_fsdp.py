@@ -74,6 +74,15 @@ def save_sharded_checkpoint(model: FSDP, optimizer: torch.optim.Optimizer, direc
     torch.save(state, directory / f"step-{step:08d}-rank-{rank}.pt")
 
 
+def prune_rank_checkpoints(directory: Path, rank: int, keep_last: int) -> None:
+    """Keep only the newest complete-step shards owned by this rank."""
+    if keep_last < 1:
+        raise ValueError("checkpoint_keep_last must be at least one")
+    shards = sorted(directory.glob(f"step-*-rank-{rank}.pt"))
+    for obsolete in shards[:-keep_last]:
+        obsolete.unlink()
+
+
 def load_sharded_checkpoint(
     model: FSDP, optimizer: torch.optim.Optimizer, directory: Path, step: int, rank: int
 ) -> int:
@@ -125,6 +134,9 @@ def main() -> None:
         precision = training["precision"]
         if precision not in {"fp16", "bf16"}:
             raise SystemExit("FSDP launcher requires fp16 or bf16 precision.")
+        keep_last = int(training.get("checkpoint_keep_last", 2))
+        if keep_last < 1:
+            raise SystemExit("checkpoint_keep_last must be at least one.")
         dtype = torch.float16 if precision == "fp16" else torch.bfloat16
         random.seed(training["seed"] + rank)
         np.random.seed(training["seed"] + rank)
@@ -183,7 +195,10 @@ def main() -> None:
             if rank == 0:
                 print(f"step={finished} mean_loss={total_loss / training['gradient_accumulation_steps']:.4f} lr={lr:.2e}", flush=True)
             if finished % training["checkpoint_every_steps"] == 0 or finished == arguments.steps:
-                save_sharded_checkpoint(model, optimizer, Path(training["output_dir"]), finished, rank)
+                output_dir = Path(training["output_dir"])
+                save_sharded_checkpoint(model, optimizer, output_dir, finished, rank)
+                dist.barrier()
+                prune_rank_checkpoints(output_dir, rank, keep_last)
                 dist.barrier()
     finally:
         if dist.is_initialized():
