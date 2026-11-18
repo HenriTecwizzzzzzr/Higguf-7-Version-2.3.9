@@ -93,6 +93,11 @@ torchrun --standalone --nproc_per_node=2 -m higguf.train_fsdp `
   --resume-dir checkpoints/higguf-7-4b --resume-step 1
 ```
 
+`configs/higguf-4b-pilot.yaml` keeps the same 3.96B parameter architecture,
+but uses an 8-token context and one update solely to test a free-GPU FSDP
+launch. A successful pilot would prove only that a single update and sharded
+checkpoint can run; it would not be a trained 4B model.
+
 ## Long-term 18B architecture
 
 | Component | Value |
